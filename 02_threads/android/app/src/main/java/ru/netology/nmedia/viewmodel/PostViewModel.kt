@@ -91,8 +91,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             .filter { it.id != id }
         )
 
-        repository.removeByIdAsync(id, object : PostRepository.RepositoryCallback<Post> {
-            override fun onSuccess(value: Post) {
+        repository.removeByIdAsync(id, object : PostRepository.RepositoryCallback<Unit> {
+            override fun onSuccess(value: Unit) {
             }
 
             override fun onError(e: Exception) {
