@@ -1,14 +1,12 @@
 package ru.netology.nmedia.repository
 
 import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.GlobalApplication
-import android.app.Activity
 
 
 
