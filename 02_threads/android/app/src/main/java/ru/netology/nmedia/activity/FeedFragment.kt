@@ -32,6 +32,7 @@ class FeedFragment : Fragment() {
         val adapter = PostsAdapter(object : OnInteractionListener {
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
             }
 
             override fun onLike(post: Post) {
@@ -62,28 +63,32 @@ class FeedFragment : Fragment() {
 
         binding.list.adapter = adapter
 
+        viewModel.dataState.observe(viewLifecycleOwner, { state ->
+            binding.progress.isVisible = state.loading
+            binding.swiperefresh.isRefreshing = state.refreshing
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .show()
+            }
+        })
+
         viewModel.data.observe(viewLifecycleOwner, { state ->
             adapter.submitList(state.posts)
-            binding.progress.isVisible = state.loading
-            binding.errorGroup.isVisible = state.error
             binding.emptyText.isVisible = state.empty
         })
 
-        binding.retryButton.setOnClickListener {
-            viewModel.loadPosts()
+        viewModel.data.observe(viewLifecycleOwner, { state ->
+            adapter.submitList(state.posts)
+            binding.emptyText.isVisible = state.empty
+        })
+
+        binding.swiperefresh.setOnRefreshListener {
+            viewModel.refreshPosts()
         }
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
-        }
-
-        fun onRefresh() {
-            viewModel.loadPosts()
-            binding.swiperefresh.isRefreshing = false
-        }
-
-        binding.swiperefresh.setOnRefreshListener {
-            onRefresh()
         }
 
         return binding.root
